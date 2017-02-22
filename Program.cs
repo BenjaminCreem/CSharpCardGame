@@ -106,24 +106,87 @@ namespace CardGame
 			group.RemoveAt(group.Count-1);
 			return c;
 		}
+	}
 
+	class Hand
+	{
+		private List<Card> group;
 
+		public Hand()
+		{ 
+			group = new List<Card>();
+		}
 
+		public void add(Card c)
+		{
+			group.Add(c);
+		}
+
+		public Card RemoveAtIndex(int i)
+		{
+			Card c = group[i];
+			group.RemoveAt(i);
+			return c;
+		}
+
+		public void removeIfSame()
+		{
+			int i = 0;
+			while (i != group.Count)
+			{
+				bool found = false;
+				int j = i + 1;
+				while (!found && j != group.Count)
+				{
+					if (group[i].getValue() == group[j].getValue())
+					{
+						found = true;
+						group.RemoveAt(i);
+						group.RemoveAt(j - 1);
+					}
+					j++;
+				}
+				i++;
+			}
+		}
+
+		public void PrintHand()
+		{
+			for (int i = 0; i < group.Count; i++)
+			{
+				Console.WriteLine(group[i]);
+			}
+		}
+
+		public void TestHand()
+		{
+			Hand h = new Hand();
+			h.add(new Card("diamond", 3));
+			h.add(new Card("diamond", 7));
+			h.add(new Card("hearts ", 14));
+			h.add(new Card("clubs", 3));
+			h.add(new Card("spades", 14));
+			h.add(new Card("hearts", 8));
+			PrintHand();
+			h.removeIfSame();
+			h.PrintHand();
+		}
 	}
 
 	class MainClass
 	{
 		public static void Main(string[] args)
 		{
+			Hand h = new Hand();
+			//Create a new deck that gets shuffled and create user and computer scores
 			Deck deck = new Deck();
-			deck.PrintDeck();
 			deck.Shuffle();
-			Console.WriteLine("\nShuffling...\n");
-			deck.PrintDeck();
-			Console.WriteLine("\n\n\n\n\nDealt card");
-			Console.WriteLine(deck.Deal());
-			Console.WriteLine("\n\n\nNew Deck");
-			deck.PrintDeck();
+			h.TestHand();
+
+			//int userScore = 0;
+			//int computerScore = 0;
+
+
 		}
 	}
 }
