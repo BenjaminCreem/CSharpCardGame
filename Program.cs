@@ -64,16 +64,43 @@ namespace CardGame
 			}
 		}
 
-
-
-		//Method is dedicated to testing if creating a deck works 
-		public void TestDeckConstruct()
+		//Mostly for testing, prints the deck 
+		public void PrintDeck()
 		{
 			for (int i = 0; i < group.Count; i++)
 			{
 				Console.WriteLine(group[i]);
 			}
 		}
+
+
+
+		//Shuffles all of the cards in the deck. Uses the swap method to exchange 2 randomly selected cards.
+		public void Shuffle()
+		{
+			//500 shuffles ensures the deck is incredibly shuffled
+			for (int x = 0; x < 500; x++)
+			{
+				//Runs through each element in the array and swaps it with a randomly selected one
+				for (int i = 0; i < group.Count; i++)
+				{
+					Random rnd = new Random();
+					int j = rnd.Next(52);
+					//Swap group[i] and group[j]
+					Swap(i, j);
+				}
+			}
+		}
+		//Swaps 2 cards in the deck group based on their indexes
+		private void Swap(int a, int b)
+		{
+			Card temp = group[a];
+			group[a] = group[b];
+			group[b] = temp;
+		}
+
+
+
 	}
 
 	class MainClass
@@ -81,7 +108,10 @@ namespace CardGame
 		public static void Main(string[] args)
 		{
 			Deck deck = new Deck();
-			deck.TestDeckConstruct();
+			deck.PrintDeck();
+			deck.Shuffle();
+			Console.WriteLine("\nShuffling...\n");
+			deck.PrintDeck();
 		}
 	}
 }
