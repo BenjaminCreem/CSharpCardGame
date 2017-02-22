@@ -99,6 +99,14 @@ namespace CardGame
 			group[b] = temp;
 		}
 
+		//Removes the card at the last index of the deck and returns it
+		public Card Deal()
+		{
+			Card c = group[group.Count-1];
+			group.RemoveAt(group.Count-1);
+			return c;
+		}
+
 
 
 	}
@@ -111,6 +119,10 @@ namespace CardGame
 			deck.PrintDeck();
 			deck.Shuffle();
 			Console.WriteLine("\nShuffling...\n");
+			deck.PrintDeck();
+			Console.WriteLine("\n\n\n\n\nDealt card");
+			Console.WriteLine(deck.Deal());
+			Console.WriteLine("\n\n\nNew Deck");
 			deck.PrintDeck();
 		}
 	}
