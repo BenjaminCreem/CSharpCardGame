@@ -16,7 +16,7 @@ namespace CardGame
 			suit = s;
 			value = v;
 		}
-		public Boolean valueEquals(Card c)
+		public bool valueEquals(Card c)
 		{
 			if (value == c.getValue())
 			{
@@ -129,25 +129,33 @@ namespace CardGame
 			return c;
 		}
 
-		public void removeIfSame()
+		public int removeIfSame()
 		{
 			int i = 0;
-			while (i != group.Count)
+			int numRemoved = 0;
+			while (i != group.Count-1)
 			{
+				Console.WriteLine("i: " + i + " count-1: " + (group.Count-1) + "\n");
 				bool found = false;
 				int j = i + 1;
 				while (!found && j != group.Count)
 				{
+					Console.WriteLine("j: " + j + "group[i]: " + group[i] + " group[j]: " + group[j]);
 					if (group[i].getValue() == group[j].getValue())
 					{
 						found = true;
+						Console.WriteLine("Removing: " + group[i]);
 						group.RemoveAt(i);
+						Console.WriteLine("Removing: " + group[j-1]);
 						group.RemoveAt(j - 1);
+						numRemoved++;
+						i = -1;
 					}
 					j++;
 				}
 				i++;
 			}
+			return numRemoved;
 		}
 
 		public void PrintHand()
@@ -177,15 +185,37 @@ namespace CardGame
 	{
 		public static void Main(string[] args)
 		{
-			Hand h = new Hand();
-			//Create a new deck that gets shuffled and create user and computer scores
+			//Create a new deck that gets shuffled and create user and computer scores and hands
 			Deck deck = new Deck();
 			deck.Shuffle();
-			h.TestHand();
-
-			//int userScore = 0;
+			int userScore = 0;
 			//int computerScore = 0;
+			Hand userHand = new Hand();
+			//Hand computerHand = new Hand();
 
+			//Number of cards in a player's hand to start is 7
+			//for (int i = 0; i < 7; i++)
+			//{
+			//	userHand.add(deck.Deal());
+			//	computerHand.add(deck.Deal());
+			//}
+
+			userHand.add(new Card("diamonds", 5));
+			userHand.add(new Card("spades", 6));
+			userHand.add(new Card("spades", 5));
+			userHand.add(new Card("diamonds", 6));
+			userHand.add(new Card("hearts", 7));
+			userHand.add(new Card("clubs", 3));
+			userHand.add(new Card("diamonds", 7));
+			//User and computer now have hands and scores. We are ready to play
+			//First we need to remove cards from the user's hand if it exists,
+			//and increase the player's scores respectively
+			userHand.PrintHand();
+			userScore = userScore + userHand.removeIfSame();
+			//computerScore = computerScore + computerHand.removeIfSame();
+			//Show the user their hand
+			Console.WriteLine("This is your hand and score\nScore: " + userScore);
+			userHand.PrintHand();
 
 		}
 	}
