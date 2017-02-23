@@ -189,32 +189,27 @@ namespace CardGame
 			Deck deck = new Deck();
 			deck.Shuffle();
 			int userScore = 0;
-			//int computerScore = 0;
+			int computerScore = 0;
 			Hand userHand = new Hand();
-			//Hand computerHand = new Hand();
+			Hand computerHand = new Hand();
 
 			//Number of cards in a player's hand to start is 7
-			//for (int i = 0; i < 7; i++)
-			//{
-			//	userHand.add(deck.Deal());
-			//	computerHand.add(deck.Deal());
-			//}
-
-			userHand.add(new Card("diamonds", 5));
-			userHand.add(new Card("spades", 6));
-			userHand.add(new Card("spades", 5));
-			userHand.add(new Card("diamonds", 6));
-			userHand.add(new Card("hearts", 7));
-			userHand.add(new Card("clubs", 3));
-			userHand.add(new Card("diamonds", 7));
+			for (int i = 0; i < 7; i++)
+			{
+				userHand.add(deck.Deal());
+				computerHand.add(deck.Deal());
+			}
 			//User and computer now have hands and scores. We are ready to play
 			//First we need to remove cards from the user's hand if it exists,
 			//and increase the player's scores respectively
-			userHand.PrintHand();
+			//userHand.PrintHand();
 			userScore = userScore + userHand.removeIfSame();
 			//computerScore = computerScore + computerHand.removeIfSame();
 			//Show the user their hand
-			Console.WriteLine("This is your hand and score\nScore: " + userScore);
+			Console.WriteLine("You are dealth 7 cards. If any of those are matches they are removed and\n " +
+			                  "then your score is automatically increased. Your official hand is displayed." +
+			                  "Your score and the computer's score are also displayed. ");
+			Console.WriteLine("This is your hand and score\nScore: " + userScore + "\nComputer Score: " + computerScore);
 			userHand.PrintHand();
 
 		}
