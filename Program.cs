@@ -73,6 +73,11 @@ namespace CardGame
 			}
 		}
 
+		public int size()
+		{
+			return group.Count;
+		}
+
 
 
 		//Shuffles all of the cards in the deck. Uses the swap method to exchange 2 randomly selected cards.
@@ -131,24 +136,26 @@ namespace CardGame
 
 		public int removeIfSame()
 		{
+			//Posistion in the List
 			int i = 0;
+			//Number of Cards removed is the total we need to increase the score by
 			int numRemoved = 0;
 			while (i != group.Count-1)
 			{
-				Console.WriteLine("i: " + i + " count-1: " + (group.Count-1) + "\n");
 				bool found = false;
 				int j = i + 1;
+				//If a match is found we need to reset. If not, continue until j cant go any higher
 				while (!found && j != group.Count)
 				{
-					Console.WriteLine("j: " + j + "group[i]: " + group[i] + " group[j]: " + group[j]);
+					//If a match is found, remove both cards and set found to true and increase num removed
 					if (group[i].getValue() == group[j].getValue())
 					{
 						found = true;
-						Console.WriteLine("Removing: " + group[i]);
 						group.RemoveAt(i);
-						Console.WriteLine("Removing: " + group[j-1]);
 						group.RemoveAt(j - 1);
 						numRemoved++;
+						//i will be incremented after this, so set it to -1 so that it will be incremented to 0
+						//afterwards and therefore start at the beginning again. 
 						i = -1;
 					}
 					j++;
@@ -162,8 +169,18 @@ namespace CardGame
 		{
 			for (int i = 0; i < group.Count; i++)
 			{
-				Console.WriteLine(group[i]);
+				Console.WriteLine(i + ": " + group[i]);
 			}
+		}
+
+		public Card cardAt(int i)
+		{
+			return group[i];
+		}
+
+		public int Size()
+		{
+			return group.Count;
 		}
 
 		public void TestHand()
@@ -206,12 +223,74 @@ namespace CardGame
 			userScore = userScore + userHand.removeIfSame();
 			//computerScore = computerScore + computerHand.removeIfSame();
 			//Show the user their hand
-			Console.WriteLine("You are dealth 7 cards. If any of those are matches they are removed and\n " +
+			Console.WriteLine("You are dealt 7 cards. If any of those are matches they are removed and\n" +
 			                  "then your score is automatically increased. Your official hand is displayed." +
-			                  "Your score and the computer's score are also displayed. ");
-			Console.WriteLine("This is your hand and score\nScore: " + userScore + "\nComputer Score: " + computerScore);
-			userHand.PrintHand();
+			                  "\nYour score and the computer's score are also displayed. ");
 
+
+			//The user has a hand and the computer has a hand. The user will go first. 
+			while (deck.size() > 0)
+			{
+				//Display User's hand, their score, and the score of the computer
+				Console.WriteLine("This is your hand and score\nScore: " + userScore + "\nComputer Score: " + computerScore);
+				userHand.PrintHand();
+				Console.WriteLine("Select a card to ask the computer about by pressing its corresponding number.");
+				int response =  Convert.ToInt32(Console.ReadLine());
+				//Now that we have the index of their card, search through the computer's hand to find a card
+				//That matches it. If a card is found, remove them both. 
+				int i = 0;
+				bool match = false;
+				while(i != computerHand.Size() && !match)
+				{
+					if (userHand.cardAt(response).getValue() == computerHand.cardAt(i).getValue())
+					{
+						Console.WriteLine("Your " + userHand.cardAt(response) + " matched with the computer's " + computerHand.cardAt(i));
+						Console.WriteLine("Removing both cards from your handsd and increasing your score...");
+						userHand.RemoveAtIndex(response);
+						computerHand.RemoveAtIndex(i);
+						userScore++;
+						match = true;
+					}
+					i++;
+				}
+				if (!match)
+				{
+					Console.WriteLine("Sorry! Go Fish!");
+					userHand.add(deck.Deal());
+					Console.WriteLine("Checking to see if your new card matches with your current cards...");
+					userHand.removeIfSame();
+				}
+
+
+
+
+				//Now we need to give the computer a shot
+				Random rnd = new Random();
+				int computerChoice = rnd.Next(0, computerHand.Size());
+				Console.WriteLine("computerChoice: " + computerChoice + "Computer Hand Size: " + computerHand.Size());
+				i = 0;
+				match = false;
+				while (i != userHand.Size() && !match)
+				{
+					if (computerHand.cardAt(computerChoice).getValue() == userHand.cardAt(i).getValue())
+					{
+						Console.WriteLine("The computer's " + computerHand.cardAt(computerChoice) + " matched with your " + userHand.cardAt(i));
+						Console.WriteLine("Removing both cards from your hands and increasing the computer's score...");
+						computerHand.RemoveAtIndex(computerChoice);
+						userHand.RemoveAtIndex(i);
+						computerScore++;
+						match = true;
+					}
+					i++;
+				}
+				if (!match)
+				{
+					Console.WriteLine("Computer Went Fish!");
+					computerHand.add(deck.Deal());
+					computerHand.removeIfSame();
+				}
+
+			}
 		}
 	}
 }
