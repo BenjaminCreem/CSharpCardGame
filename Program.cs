@@ -264,6 +264,33 @@ namespace CardGame
 
 
 
+				//At this point, the user might not have any cards. We need to check if they have cards, and give them 
+				//Cards if necessary
+				if (userHand.Size() < 1)
+				{
+					if (deck.size() >= 3)
+					{
+						Console.WriteLine("You ran out of cards! Giving you 3 cards...");
+						userHand.add(deck.Deal());
+						userHand.add(deck.Deal());
+						userHand.add(deck.Deal());
+					}
+					else
+					{
+						Console.WriteLine("You ran out of cards! There are almost no cards in the deck!" +
+						                  "\nGiving you the rest of the cards in the deck...");
+						while (deck.size() > 0)
+						{
+							userHand.add(deck.Deal());
+						}
+					}
+					Console.WriteLine("Checking to see if your new cards have matches in your hand...");
+					userHand.removeIfSame();
+				}
+
+
+
+
 				//Now we need to give the computer a shot
 				Random rnd = new Random();
 				int computerChoice = rnd.Next(0, computerHand.Size());
@@ -290,6 +317,45 @@ namespace CardGame
 					computerHand.removeIfSame();
 				}
 
+
+				//We have to see if there are cards in the computer's hand
+				//Or not, and if there not add them
+				if (computerHand.Size() < 1)
+				{
+					if (deck.size() >= 3)
+					{
+						Console.WriteLine("You ran out of cards! Giving you 3 cards...");
+						computerHand.add(deck.Deal());
+						computerHand.add(deck.Deal());
+						computerHand.add(deck.Deal());
+					}
+					else
+					{
+						Console.WriteLine("The computer ran out of cards! There are almost no cards in the deck!" +
+										  "\nGiving the computer the rest of the cards in the deck...");
+						while (deck.size() > 0)
+						{
+							computerHand.add(deck.Deal());
+						}
+					}
+					computerHand.removeIfSame();
+				}
+
+
+
+
+			}
+			if (userScore > computerScore)
+			{
+				Console.WriteLine("You win!");
+			}
+			else if (computerScore > userScore)
+			{
+				Console.WriteLine("Computer Wins!");
+			}
+			else
+			{ 
+				Console.WriteLine("Tie Game!");
 			}
 		}
 	}
