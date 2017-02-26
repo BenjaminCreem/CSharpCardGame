@@ -107,7 +107,6 @@ namespace CardGame
 		//Removes the card at the last index of the deck and returns it
 		public Card Deal()
 		{
-			Console.WriteLine("There are " + group.Count + " cards remaining before dealing");
 			Card c = group[group.Count - 1];
 			group.RemoveAt(group.Count - 1);
 			return c;
@@ -141,19 +140,18 @@ namespace CardGame
 			int i = 0;
 			//Number of Cards removed is the total we need to increase the score by
 			int numRemoved = 0;
-			while (i != group.Count - 1)
+			while (i != group.Count - 1 && group.Count > 0)
 			{
 				bool found = false;
 				int j = i + 1;
 				//If a match is found we need to reset. If not, continue until j cant go any higher
 				while ((!found && j < group.Count) && group.Count != 0)
 				{
-					Console.WriteLine("Group Count: " + group.Count);
 					//If a match is found, remove both cards and set found to true and increase num removed
 					if (group[i].getValue() == group[j].getValue())
 					{
 						found = true;
-						Console.WriteLine("Your " + group[i] + " matched with your " + group[j] + "!");
+						Console.WriteLine(group[i] + " matched with " + group[j]);
 						group.RemoveAt(i);
 						group.RemoveAt(j - 1);
 						numRemoved++;
@@ -225,35 +223,129 @@ namespace CardGame
 				computerHand.add(deck.Deal());
 			}
 			Console.WriteLine("You are dealt 7 cards. If any of those are matches they are removed and\n" +
-							  "then your score is automatically increased. Your official hand is displayed." +
-							  "\nYour score and the computer's score are also displayed. ");
+							  "then your score is automatically increased.");
 			//User and computer now have hands and scores. We are ready to play
 			//First we need to remove cards from the user's hand if it exists,
 			//and increase the player's scores respectively
 			userScore = userScore + userHand.removeIfSame();
 			computerScore = computerScore + computerHand.removeIfSame();
-			//Show the user their hand
 		}
 
+		//Starts, plays, and determines winner of a game of go fish
 		public static void playGame()
 		{
 			startGame();
+			gamePlay();
 			determineWinner();
 		}
 
+		//Continue to play game game until all cards are gone through the deck, and there are no more cards in anyone's hands
 		public static void gamePlay()
-		{ 
-			
+		{
+			while (userHand.Size() != 0 && computerHand.Size() != 0)
+			{
+				userTurn();
+				computerTurn();
+			}
 		}
 
+		//User turn for a game of go fish
 		public static void userTurn()
-		{ 
-		
+		{
+			//Display user hand and scores
+			Console.WriteLine("Current Scores and your hand: \n" +
+			                  "Your Score: " + userScore + "\tComputer Score: " + computerScore);
+			userHand.PrintHand();
+			//Find out which card the user wants to ask the computer about 
+			Console.WriteLine("Ask the computer if they have any of your cards by pressing the corresponding number.");
+			int userChoice = Convert.ToInt32(Console.ReadLine());
+			int i = 0;
+			bool found = false;
+			//search the computer's hand for the card. 
+			while (i < computerHand.Size() && !found)
+			{
+				if (userHand.cardAt(userChoice).getValue() == computerHand.cardAt(i).getValue())
+				{
+					found = true;
+					Console.WriteLine("Your card matched with the computer's " + computerHand.cardAt(i));
+					userScore++;
+					userHand.RemoveAtIndex(userChoice);
+					computerHand.RemoveAtIndex(i);
+					//If the user or computer runs out of cards and the deck still has cards, give them a card
+					if (userHand.Size() == 0 && deck.size() > 0)
+					{
+						Console.WriteLine("You have no more cards in your hand! Giving you one card...");
+						userHand.add(deck.Deal());
+					}
+					if (computerHand.Size() == 0 && deck.size() > 0)
+					{
+						computerHand.add(deck.Deal());
+					}
+				}
+				i++;
+			}
+			//Go fish 
+			if (!found && deck.size() > 0)
+			{
+				Console.WriteLine("Go Fish!");
+				userHand.add(deck.Deal());
+				userScore = userScore + userHand.removeIfSame();
+				if (userHand.Size() == 0 && deck.size() > 0)
+				{
+					Console.WriteLine("You have no more cards in your hand! Giving you one card...");
+					userHand.add(deck.Deal());
+				}
+			}
+			else if(deck.size() == 0)
+			{
+				Console.WriteLine("No more cards in the deck! Can't go fish!");
+			}
 		}
 
+		//Computer turn for a game of go fish
 		public static void computerTurn()
-		{ 
-			
+		{
+			Random rnd = new Random();
+			int computerChoice = rnd.Next(computerHand.Size());
+			int i = 0;
+			bool found = false;
+			while (i < userHand.Size() && !found)
+			{
+				Console.WriteLine("computerChoice: "+ computerChoice + " computerHandSize " + computerHand.Size());
+				if (computerHand.cardAt(computerChoice).getValue() == userHand.cardAt(i).getValue())
+				{
+					found = true;
+					computerScore++;
+					Console.WriteLine("The computer's " + computerHand.cardAt(computerChoice) + " matched with your " +
+									  userHand.cardAt(i) + "!");
+					computerHand.RemoveAtIndex(computerChoice);
+					userHand.RemoveAtIndex(i);
+				}
+				if (userHand.Size() == 0 && deck.size() > 0)
+				{
+					userHand.add(deck.Deal());
+				}
+				if (computerHand.Size() == 0 && deck.size() > 0)
+				{
+					computerHand.add(deck.Deal());
+				}
+				i++;
+			}
+			if (!found && deck.size() > 0)
+			{
+				Console.WriteLine("Computer went fish!");
+				computerHand.add(deck.Deal());
+				computerScore = computerScore + computerHand.removeIfSame();
+			}
+			if (computerHand.Size() == 0 && deck.size() > 0)
+			{
+				Console.WriteLine("Computer ran out of cards! Giving computer a card...");
+				computerHand.add(deck.Deal());
+			}
+			else if(deck.size() == 0)
+			{
+				Console.WriteLine("No more cards in the deck! Cant go fish!");
+			}
 		}
 
 
@@ -273,6 +365,10 @@ namespace CardGame
 				Console.WriteLine("Tie Game!");
 			}
 			Console.WriteLine("Your score was: " + userScore + " and the computer's was " + computerScore);
+			userHand.PrintHand();
+			Console.WriteLine(userHand.Size());
+			computerHand.PrintHand();
+			Console.WriteLine(computerHand.Size());
 		}
 	}
 }
