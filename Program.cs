@@ -235,7 +235,9 @@ namespace CardGame
 		public static void playGame()
 		{
 			startGame();
+			Console.WriteLine("\n\n\n");
 			gamePlay();
+			Console.WriteLine("\n");
 			determineWinner();
 		}
 
@@ -245,6 +247,7 @@ namespace CardGame
 			while (userHand.Size() != 0 && computerHand.Size() != 0)
 			{
 				userTurn();
+				Console.WriteLine();
 				computerTurn();
 			}
 		}
@@ -311,7 +314,6 @@ namespace CardGame
 			bool found = false;
 			while (i < userHand.Size() && !found)
 			{
-				Console.WriteLine("computerChoice: "+ computerChoice + " computerHandSize " + computerHand.Size());
 				if (computerHand.cardAt(computerChoice).getValue() == userHand.cardAt(i).getValue())
 				{
 					found = true;
@@ -365,10 +367,6 @@ namespace CardGame
 				Console.WriteLine("Tie Game!");
 			}
 			Console.WriteLine("Your score was: " + userScore + " and the computer's was " + computerScore);
-			userHand.PrintHand();
-			Console.WriteLine(userHand.Size());
-			computerHand.PrintHand();
-			Console.WriteLine(computerHand.Size());
 		}
 	}
 }
